@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceRouteImport } from './routes/_workspace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as WorkspaceDashboardRouteImport } from './routes/_workspace.dashboard'
+import { Route as WorkspaceDataRouteImport } from './routes/_workspace.data'
 import { Route as WorkspaceDocumentsIndexRouteImport } from './routes/_workspace.documents.index'
+import { Route as WorkspaceDocumentsIdRouteImport } from './routes/_workspace.documents.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,9 +36,19 @@ const WorkspaceDashboardRoute = WorkspaceDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => WorkspaceRoute,
 } as any)
+const WorkspaceDataRoute = WorkspaceDataRouteImport.update({
+  id: '/data',
+  path: '/data',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
 const WorkspaceDocumentsIndexRoute = WorkspaceDocumentsIndexRouteImport.update({
   id: '/documents/',
   path: '/documents/',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceDocumentsIdRoute = WorkspaceDocumentsIdRouteImport.update({
+  id: '/documents/$id',
+  path: '/documents/$id',
   getParentRoute: () => WorkspaceRoute,
 } as any)
 
@@ -44,12 +56,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof WorkspaceDashboardRoute
+  '/data': typeof WorkspaceDataRoute
+  '/documents/$id': typeof WorkspaceDocumentsIdRoute
   '/documents/': typeof WorkspaceDocumentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof WorkspaceDashboardRoute
+  '/data': typeof WorkspaceDataRoute
+  '/documents/$id': typeof WorkspaceDocumentsIdRoute
   '/documents': typeof WorkspaceDocumentsIndexRoute
 }
 export interface FileRoutesById {
@@ -58,19 +74,24 @@ export interface FileRoutesById {
   '/_workspace': typeof WorkspaceRouteWithChildren
   '/login': typeof LoginRoute
   '/_workspace/dashboard': typeof WorkspaceDashboardRoute
+  '/_workspace/data': typeof WorkspaceDataRoute
+  '/_workspace/documents/$id': typeof WorkspaceDocumentsIdRoute
   '/_workspace/documents/': typeof WorkspaceDocumentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard' | '/documents/'
+  fullPaths:
+    '/' | '/login' | '/dashboard' | '/data' | '/documents/$id' | '/documents/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/documents'
+  to: '/' | '/login' | '/dashboard' | '/data' | '/documents/$id' | '/documents'
   id:
     | '__root__'
     | '/'
     | '/_workspace'
     | '/login'
     | '/_workspace/dashboard'
+    | '/_workspace/data'
+    | '/_workspace/documents/$id'
     | '/_workspace/documents/'
   fileRoutesById: FileRoutesById
 }
@@ -110,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkspaceDashboardRouteImport
       parentRoute: typeof WorkspaceRoute
     }
+    '/_workspace/data': {
+      id: '/_workspace/data'
+      path: '/data'
+      fullPath: '/data'
+      preLoaderRoute: typeof WorkspaceDataRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
     '/_workspace/documents/': {
       id: '/_workspace/documents/'
       path: '/documents'
@@ -117,16 +145,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkspaceDocumentsIndexRouteImport
       parentRoute: typeof WorkspaceRoute
     }
+    '/_workspace/documents/$id': {
+      id: '/_workspace/documents/$id'
+      path: '/documents/$id'
+      fullPath: '/documents/$id'
+      preLoaderRoute: typeof WorkspaceDocumentsIdRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
   }
 }
 
 interface WorkspaceRouteChildren {
   WorkspaceDashboardRoute: typeof WorkspaceDashboardRoute
+  WorkspaceDataRoute: typeof WorkspaceDataRoute
+  WorkspaceDocumentsIdRoute: typeof WorkspaceDocumentsIdRoute
   WorkspaceDocumentsIndexRoute: typeof WorkspaceDocumentsIndexRoute
 }
 
 const WorkspaceRouteChildren: WorkspaceRouteChildren = {
   WorkspaceDashboardRoute: WorkspaceDashboardRoute,
+  WorkspaceDataRoute: WorkspaceDataRoute,
+  WorkspaceDocumentsIdRoute: WorkspaceDocumentsIdRoute,
   WorkspaceDocumentsIndexRoute: WorkspaceDocumentsIndexRoute,
 }
 
