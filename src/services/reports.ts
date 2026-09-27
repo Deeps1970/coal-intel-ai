@@ -1,6 +1,7 @@
 import { REPORTS } from "@/data/misc";
 import type { Report } from "@/types";
 import { mockCall } from "./api";
+import { recordAudit } from "./audit";
 
 const KEY = "coalintel.reports.v1";
 const readStore = (): Report[] => {
@@ -57,6 +58,7 @@ export async function generateReport(input: { type: string; sources: string[]; p
         status: "Generated",
       };
       const rows = readStore(); rows.unshift(r); writeStore(rows);
+      recordAudit("Generated report", "Report Generator", r.id, "Completed");
       return r;
     },
     400,

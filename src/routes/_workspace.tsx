@@ -32,13 +32,12 @@ function WorkspaceLayout() {
         </SheetContent>
       </Sheet>
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="no-print flex items-center justify-center gap-2 bg-sidebar px-4 py-1 text-center font-mono text-[10.5px] uppercase tracking-[0.14em] text-sidebar-foreground">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sidebar-primary" />
-          <span className="font-semibold text-sidebar-primary">Demo Mode</span>
-          <span className="hidden opacity-70 sm:inline">• SIH 2026 Prototype • PS 26023 • Source-derived demo datasets, not live data</span>
+        <div className="no-print flex min-h-7 items-center justify-center gap-2 border-b bg-muted/50 px-4 text-center text-[10px] text-muted-foreground">
+          <span className="font-semibold uppercase tracking-wider text-primary">Demo Mode</span>
+          <span>SIH 2026 Prototype · PS 26023 · Not an official Government / Ministry / CIL / CMPDI system</span>
         </div>
         <TopBar onMenu={() => setMobileOpen(true)} />
-        <main key={path} className="animate-fade-up mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 md:px-8 md:py-8">
+        <main key={path} className="mx-auto w-full max-w-[1480px] flex-1 px-4 py-5 md:px-7 md:py-6">
           <Outlet />
         </main>
       </div>

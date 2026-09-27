@@ -1,6 +1,7 @@
 import { buildPipeline, DOCUMENTS } from "@/data/documents";
 import type { CoalDocument, FileType } from "@/types";
 import { mockCall } from "./api";
+import { recordAudit } from "./audit";
 
 const KEY = "coalintel.uploaded-documents.v1";
 const store: CoalDocument[] = [...DOCUMENTS];
@@ -62,6 +63,7 @@ export async function uploadDocument(file: File, meta: { department: string; cat
       };
       store.unshift(doc);
       persistUploads();
+      recordAudit("Uploaded document", "Documents", doc.id, "Uploaded");
       return doc;
     },
     200,
@@ -96,6 +98,7 @@ export async function processDocument(id: string) {
           { id: "e6", label: "Coal Dispatch", type: "Dispatch", confidence: 91.8 },
         ];
         d.tables = [{ caption: "Illustrative extracted coal-sector metrics", ref: "Demo extract • Table 1", columns: ["Metric", "Period", "Value", "Status"], rows: [["Coal production", "FY2024-25", "1,047.52 MT", "Actual — source-derived"], ["Coal imports", "FY2024-25", "243.62 MT", "Actual — source-derived"], ["Dispatch", "FY2024-25", "Illustrative", "Demo only"]] }];
+        recordAudit("Completed simulated processing", "Documents", d.id, "Processed");
       }
       persistUploads();
       return d;
@@ -109,6 +112,7 @@ export async function setDocumentStatus(id: string, status: CoalDocument["status
     syncStore();
     const d = store.find((x) => x.id === id)!;
     d.status = status;
+    recordAudit(status === "Validated" ? "Validated document" : `Updated document status to ${status}`, "Documents", id, status);
     if (status === "Validated") d.pipeline.forEach((s) => (s.status = "done"));
     persistUploads();
     return d;

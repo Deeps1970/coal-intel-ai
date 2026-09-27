@@ -90,6 +90,7 @@ function Reports() {
   const title = parliament
     ? "Parliamentary Response — Coal Production"
     : `${type.replace(" Report", "")} — ${period}`;
+  const referenceNo = report ? `CIAI/REP/${new Date().getFullYear()}/${report.id.slice(-5).toUpperCase()}` : "";
   const sourceRefs = sources.flatMap((s) =>
     s.includes("Production")
       ? [SOURCES.production]
@@ -273,7 +274,7 @@ function Reports() {
                   </div>
                   <h2 className="mt-3 text-2xl font-bold">{title}</h2>
                   <div className="mt-1 text-sm text-slate-500">
-                    {period} · Generated {new Date().toLocaleDateString()}
+                    {period} · Prepared {new Date().toLocaleDateString()} · Prototype Reference: {referenceNo}
                   </div>
                 </header>
                 {parliament ? (

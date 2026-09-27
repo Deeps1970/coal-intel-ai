@@ -44,6 +44,7 @@ export function searchAll(q: string) {
   return {
     documents: docs.filter((d) => hit(`${d.name} ${d.topics.join(" ")} ${d.summary}`)).slice(0, 5),
     datasets: DATASETS.filter((d) => hit(`${d.name} ${d.description}`)),
+    records: DATASETS.flatMap((d) => d.records.filter((r) => hit(`${d.name} ${Object.values(r).join(" ")}`)).slice(0, 4).map((r) => ({ id: r.id, datasetId: d.id, dataset: d.name, period: String(r.fy ?? "Period not specified"), label: Object.entries(r).filter(([k]) => k !== "id").map(([k,v]) => `${k}: ${v}`).join(" · "), source: d.source.document }))).slice(0, 8),
     reports: reports.filter((r) => hit(`${r.title} ${r.type}`)).slice(0, 4),
     topics: TOPICS.filter((t) => hit(`${t.name} ${t.keywords.join(" ")}`)).slice(0, 4),
     entities: ENTITIES.filter((e) => hit(`${e.name} ${e.short}`)),

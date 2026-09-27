@@ -7,6 +7,7 @@ import { PageHeader, Panel, StatusBadge, EmptyState } from "@/components/app/com
 import { SourceCitation } from "@/components/app/SourceCitation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { recordAudit } from "@/services/audit";
 
 export const Route = createFileRoute("/_workspace/validation")({ head: () => ({ meta: [{ title: "Data Validation & Traceability — COALINTEL AI" }] }), component: ValidationPage });
 const KEY = "coalintel.validation.v1";
@@ -21,10 +22,11 @@ function ValidationPage() {
   const act = (row: ValidationRecord, action: "review" | "resolve" | "note") => {
     const note = action === "note" ? window.prompt("Add an analyst note:") : null;
     if (action === "note" && note === null) return;
+    recordAudit(action === "review" ? "Reviewed validation issue" : action === "resolve" ? "Resolved validation issue" : "Added validation note", "Data Validation", row.id, action === "resolve" ? "Resolved" : "Review Required");
     update(rows.map((r) => r.id !== row.id ? r : { ...r, status: action === "resolve" ? "Validated" : r.status, history: [...r.history, { at: new Date().toLocaleString(), by: "Demo User", action: action === "review" ? "Marked reviewed by analyst" : action === "resolve" ? "Resolved by analyst" : `Note: ${note}` }] }));
   };
   return <>
-    <PageHeader title="Data Validation & Traceability" subtitle="Review source alignment, extraction confidence and record conflicts." actions={<Button variant="outline" onClick={() => update(VALIDATION)}><ShieldCheck className="mr-2 h-4 w-4"/>Reset demo issues</Button>} />
+    <PageHeader title="Data Validation & Quality Control" subtitle="Review source alignment, extraction confidence, record conflicts and analyst actions." actions={<Button variant="outline" onClick={() => update(VALIDATION)}><ShieldCheck className="mr-2 h-4 w-4"/>Reset demo issues</Button>} />
     <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-5">{[
       ["Total records", rows.length, "neutral"], ["Validated", count("Validated"), "success"], ["Review required", count("Review Required"), "warning"], ["Conflicts", count("Conflict"), "error"], ["Missing source", count("Missing Source"), "error"],
     ].map(([label, value, tone]) => <div key={String(label)} className="rounded-xl border bg-card p-4"><div className="flex items-center gap-2 text-xs text-muted-foreground"><FileWarning className="h-3.5 w-3.5"/>{label}</div><div className={`mt-2 text-2xl font-semibold tabular ${tone === "success" ? "text-success" : tone === "error" ? "text-destructive" : tone === "warning" ? "text-accent-foreground" : ""}`}>{value}</div></div>)}

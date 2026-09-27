@@ -14,6 +14,7 @@ import { Route as WorkspaceRouteImport } from './routes/_workspace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as WorkspaceAiAssistantRouteImport } from './routes/_workspace.ai-assistant'
 import { Route as WorkspaceAnalyticsRouteImport } from './routes/_workspace.analytics'
+import { Route as WorkspaceAuditTrailRouteImport } from './routes/_workspace.audit-trail'
 import { Route as WorkspaceDashboardRouteImport } from './routes/_workspace.dashboard'
 import { Route as WorkspaceDataRouteImport } from './routes/_workspace.data'
 import { Route as WorkspaceSettingsRouteImport } from './routes/_workspace.settings'
@@ -47,6 +48,11 @@ const WorkspaceAiAssistantRoute = WorkspaceAiAssistantRouteImport.update({
 const WorkspaceAnalyticsRoute = WorkspaceAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceAuditTrailRoute = WorkspaceAuditTrailRouteImport.update({
+  id: '/audit-trail',
+  path: '/audit-trail',
   getParentRoute: () => WorkspaceRoute,
 } as any)
 const WorkspaceDashboardRoute = WorkspaceDashboardRouteImport.update({
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/ai-assistant': typeof WorkspaceAiAssistantRoute
   '/analytics': typeof WorkspaceAnalyticsRoute
+  '/audit-trail': typeof WorkspaceAuditTrailRoute
   '/dashboard': typeof WorkspaceDashboardRoute
   '/data': typeof WorkspaceDataRoute
   '/settings': typeof WorkspaceSettingsRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/ai-assistant': typeof WorkspaceAiAssistantRoute
   '/analytics': typeof WorkspaceAnalyticsRoute
+  '/audit-trail': typeof WorkspaceAuditTrailRoute
   '/dashboard': typeof WorkspaceDashboardRoute
   '/data': typeof WorkspaceDataRoute
   '/settings': typeof WorkspaceSettingsRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_workspace/ai-assistant': typeof WorkspaceAiAssistantRoute
   '/_workspace/analytics': typeof WorkspaceAnalyticsRoute
+  '/_workspace/audit-trail': typeof WorkspaceAuditTrailRoute
   '/_workspace/dashboard': typeof WorkspaceDashboardRoute
   '/_workspace/data': typeof WorkspaceDataRoute
   '/_workspace/settings': typeof WorkspaceSettingsRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/ai-assistant'
     | '/analytics'
+    | '/audit-trail'
     | '/dashboard'
     | '/data'
     | '/settings'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/ai-assistant'
     | '/analytics'
+    | '/audit-trail'
     | '/dashboard'
     | '/data'
     | '/settings'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_workspace/ai-assistant'
     | '/_workspace/analytics'
+    | '/_workspace/audit-trail'
     | '/_workspace/dashboard'
     | '/_workspace/data'
     | '/_workspace/settings'
@@ -243,6 +255,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof WorkspaceAnalyticsRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/audit-trail': {
+      id: '/_workspace/audit-trail'
+      path: '/audit-trail'
+      fullPath: '/audit-trail'
+      preLoaderRoute: typeof WorkspaceAuditTrailRouteImport
       parentRoute: typeof WorkspaceRoute
     }
     '/_workspace/dashboard': {
@@ -321,6 +340,7 @@ declare module '@tanstack/react-router' {
 interface WorkspaceRouteChildren {
   WorkspaceAiAssistantRoute: typeof WorkspaceAiAssistantRoute
   WorkspaceAnalyticsRoute: typeof WorkspaceAnalyticsRoute
+  WorkspaceAuditTrailRoute: typeof WorkspaceAuditTrailRoute
   WorkspaceDashboardRoute: typeof WorkspaceDashboardRoute
   WorkspaceDataRoute: typeof WorkspaceDataRoute
   WorkspaceSettingsRoute: typeof WorkspaceSettingsRoute
@@ -336,6 +356,7 @@ interface WorkspaceRouteChildren {
 const WorkspaceRouteChildren: WorkspaceRouteChildren = {
   WorkspaceAiAssistantRoute: WorkspaceAiAssistantRoute,
   WorkspaceAnalyticsRoute: WorkspaceAnalyticsRoute,
+  WorkspaceAuditTrailRoute: WorkspaceAuditTrailRoute,
   WorkspaceDashboardRoute: WorkspaceDashboardRoute,
   WorkspaceDataRoute: WorkspaceDataRoute,
   WorkspaceSettingsRoute: WorkspaceSettingsRoute,

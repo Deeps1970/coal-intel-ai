@@ -100,31 +100,23 @@ function DocumentsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
-                <tr>{["Document", "Type", "Source", "Uploaded", "Processing Status", "Extraction Accuracy", "Topics", ""].map((h) => <th key={h} className="whitespace-nowrap px-4 py-2.5 font-medium">{h}</th>)}</tr>
+                <tr>{["Document ID", "Document Title", "Type", "Source", "Reporting Year", "Uploaded Date", "Processing Status", "Validation Status", "Actions"].map((h) => <th key={h} className="whitespace-nowrap px-3 py-2.5 font-medium">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y">
                 {rows.map((d) => (
                   <tr key={d.id} className="cursor-pointer transition-colors hover:bg-muted/40" onClick={() => nav({ to: "/documents/$id", params: { id: d.id } })}>
-                    <td className="max-w-[300px] px-4 py-3">
+                    <td className="whitespace-nowrap px-3 py-3 font-mono text-[11px]">{d.id}</td>
+                    <td className="max-w-[300px] px-3 py-3">
                       <div className="truncate font-medium">{d.name}</div>
                       <div className="text-xs text-muted-foreground">{d.category} • {d.department}</div>
                     </td>
-                    <td className="px-4 py-3"><span className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[11px]">{d.type}</span></td>
-                    <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{d.source}</td>
-                    <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-muted-foreground">{d.uploadedAt}</td>
-                    <td className="px-4 py-3"><StatusBadge status={d.status} /></td>
-                    <td className="px-4 py-3">
-                      {d.accuracy == null ? <span className="text-muted-foreground">—</span> : (
-                        <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted"><div className={d.accuracy >= 90 ? "h-full bg-success" : "h-full bg-warning"} style={{ width: `${d.accuracy}%` }} /></div>
-                          <span className="tabular text-xs">{d.accuracy.toFixed(1)}%</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex max-w-[220px] flex-wrap gap-1">{d.topics.slice(0, 3).map((t) => <span key={t} className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">{t}</span>)}</div>
-                    </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 py-3"><span className="rounded-sm border bg-muted/40 px-1.5 py-0.5 font-mono text-[11px]">{d.type}</span></td>
+                    <td className="whitespace-nowrap px-3 py-3 text-muted-foreground">{d.source}</td>
+                    <td className="whitespace-nowrap px-3 py-3 text-xs">{d.name.includes("2024-25") || d.name.includes("24-25") ? "FY2024-25" : d.name.includes("2025-26") || d.name.includes("25-26") ? "FY2025-26" : "Not specified"}</td>
+                    <td className="whitespace-nowrap px-3 py-3 font-mono text-xs text-muted-foreground">{d.uploadedAt}</td>
+                    <td className="px-3 py-3"><StatusBadge status={d.status} /></td>
+                    <td className="px-3 py-3"><StatusBadge status={d.status === "Validated" ? "Validated" : d.status === "Needs Validation" ? "Review Required" : d.status === "Failed" ? "Conflict" : "Pending"}/></td>
+                    <td className="px-3 py-3 text-right">
                       <Button asChild size="sm" variant="ghost" onClick={(e) => e.stopPropagation()}>
                         <Link to="/documents/$id" params={{ id: d.id }}><Eye /> Open</Link>
                       </Button>

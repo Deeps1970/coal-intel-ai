@@ -8,36 +8,50 @@ export function Logo({ compact = false, className }: { compact?: boolean; classN
   return (
     <div className={cn("flex items-center gap-2.5", className)}>
       <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
-        <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="currentColor" aria-hidden>
-          <path d="M12 2 3 7v10l9 5 9-5V7l-9-5Zm0 2.3 6.9 3.8L12 12 5.1 8.1 12 4.3Z" />
-        </svg>
+        <span className="font-mono text-[10px] font-bold tracking-tight">CI</span>
       </div>
       {!compact && (
         <div className="leading-none">
-          <div className="text-[15px] font-semibold tracking-[0.08em]">COALINTEL AI</div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.14em] opacity-60">Reporting Intelligence</div>
+          <div className="text-[14px] font-semibold tracking-[0.06em]">COALINTEL AI</div>
+          <div className="mt-1 max-w-48 text-[9px] leading-tight opacity-70">
+            Geological, Mining & Reporting Information System
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-export function PageHeader({ title, subtitle, actions, eyebrow }: { title: string; subtitle?: string; actions?: ReactNode; eyebrow?: string }) {
+export function PageHeader({
+  title,
+  subtitle,
+  actions,
+  eyebrow,
+}: {
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
+  eyebrow?: string;
+}) {
   return (
     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
-        {eyebrow && <div className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-foreground">{eyebrow}</div>}
+        {eyebrow && (
+          <div className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-foreground">
+            {eyebrow}
+          </div>
+        )}
         <h1 className="text-2xl font-semibold tracking-tight md:text-[28px]">{title}</h1>
         {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground">{subtitle}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="no-print flex flex-wrap gap-2">{actions}</div>}
     </div>
   );
 }
 
 export function DemoTag({ label = "Demo Data" }: { label?: string }) {
   return (
-    <span className="inline-flex items-center rounded border border-dashed border-primary/60 bg-accent px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-accent-foreground">
+    <span className="inline-flex items-center rounded-sm border bg-muted/70 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
       {label}
     </span>
   );
@@ -53,29 +67,74 @@ const tones: Record<string, string> = {
 };
 
 const STATUS_TONE: Record<string, keyof typeof tones> = {
-  Validated: "success", Processed: "success", Published: "success", Passed: "success", Actual: "success",
-  Processing: "info", Uploaded: "neutral", Generated: "info", Draft: "neutral",
-  "Needs Validation": "warning", "Review Required": "warning", "Under Review": "warning", Pending: "warning", Partial: "warning",
-  Provisional: "primary", Target: "info", Projection: "info", Illustrative: "neutral",
-  Failed: "error", Conflict: "error", "Missing Source": "error",
+  Validated: "success",
+  Processed: "success",
+  Published: "success",
+  Passed: "success",
+  Actual: "success",
+  Processing: "info",
+  Uploaded: "neutral",
+  Generated: "info",
+  Draft: "neutral",
+  "Needs Validation": "warning",
+  "Review Required": "warning",
+  "Under Review": "warning",
+  Pending: "warning",
+  Partial: "warning",
+  Provisional: "primary",
+  Target: "info",
+  Projection: "info",
+  Illustrative: "neutral",
+  Failed: "error",
+  "Processing Failed": "error",
+  Conflict: "error",
+  "Missing Source": "error",
+  Resolved: "success",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  "Needs Validation": "Validation Required",
+  Failed: "Processing Failed",
 };
 
 export function StatusBadge({ status, className }: { status: string; className?: string }) {
   const tone = tones[STATUS_TONE[status] ?? "neutral"];
   return (
-    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-medium", tone, className)}>
-      {status === "Processing" ? <Loader2 className="h-3 w-3 animate-spin" /> : <span className="h-1.5 w-1.5 rounded-full bg-current" />}
-      {status}
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-medium",
+        tone,
+        className,
+      )}
+    >
+      {status === "Processing" ? (
+        <Loader2 className="h-3 w-3 animate-spin" />
+      ) : (
+        <span className="h-1.5 w-1.5 rounded-full bg-current" />
+      )}
+      {STATUS_LABEL[status] ?? status}
     </span>
   );
 }
 
-export function Panel({ title, action, children, className, bodyClassName }: { title?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; bodyClassName?: string }) {
+export function Panel({
+  title,
+  action,
+  children,
+  className,
+  bodyClassName,
+}: {
+  title?: ReactNode;
+  action?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  bodyClassName?: string;
+}) {
   return (
-    <section className={cn("animate-fade-up rounded-xl border bg-card text-card-foreground", className)}>
+    <section className={cn("rounded-md border bg-card text-card-foreground", className)}>
       {(title || action) && (
-        <div className="flex items-center justify-between gap-3 border-b px-5 py-3.5">
-          <h3 className="text-sm font-semibold">{title}</h3>
+        <div className="flex items-center justify-between gap-3 border-b bg-muted/35 px-4 py-2.5">
+          <h3 className="text-[13px] font-semibold">{title}</h3>
           {action}
         </div>
       )}
@@ -94,7 +153,15 @@ export function LoadingBlock({ rows = 4 }: { rows?: number }) {
   );
 }
 
-export function EmptyState({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
+export function EmptyState({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description?: string;
+  action?: ReactNode;
+}) {
   return (
     <div className="flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-12 text-center">
       <Inbox className="mb-3 h-8 w-8 text-muted-foreground/60" />

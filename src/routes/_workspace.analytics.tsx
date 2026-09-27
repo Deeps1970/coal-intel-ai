@@ -71,6 +71,13 @@ function Analytics() {
       ...(years.includes("FY2023-24") ? { "FY2023-24": r.fy24 } : {}),
       ...(years.includes("FY2024-25") ? { "FY2024-25": r.fy25 } : {}),
     }));
+  const dispatchRows = dispatchByCompany
+    .filter((r) => company === "All companies" || r.company === company)
+    .map((r) => ({
+      company: r.company,
+      ...(years.includes("FY2023-24") ? { "FY2023-24": r.fy24 } : {}),
+      ...(years.includes("FY2024-25") ? { "FY2024-25": r.fy25 } : {}),
+    }));
   const compareSeries = [
     ...(years.includes("FY2023-24") ? [{ key: "FY2023-24", name: "FY2023-24" }] : []),
     ...(years.includes("FY2024-25") ? [{ key: "FY2024-25", name: "FY2024-25" }] : []),
@@ -109,8 +116,8 @@ function Analytics() {
   return (
     <>
       <PageHeader
-        title="Coal Sector Analytics"
-        subtitle="Explore production, dispatch, demand, imports, lignite and CMPDI financials with source traceability."
+        title="Analytical Reports"
+        subtitle="MIS analysis of production, dispatch, demand, imports, lignite and CMPDI financials."
       />
       <Panel className="mb-5" title="Analysis filters" bodyClassName="p-4">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -166,6 +173,7 @@ function Analytics() {
           <ChartCard
             title="Annual coal production (MT)"
             source={CHART_SOURCES.production}
+            dataRows={production}
             note="FY2025-26* is provisional Apr–Dec; annual actuals shown where published."
           >
             <SimpleLine
@@ -182,6 +190,7 @@ function Analytics() {
           <ChartCard
             title="Production by company (MT)"
             source={CHART_SOURCES.company}
+            dataRows={companyRows}
             note="Company split is reported at CIL/SCCL/Captive level; CIL subsidiary allocation is illustrative."
           >
             <SimpleBar data={companyRows} x="company" series={compareSeries} />
@@ -191,6 +200,7 @@ function Analytics() {
           <ChartCard
             title="CIL target vs actual (MT)"
             source={CHART_SOURCES.production}
+            dataRows={[{ company: "CIL", actual: 781.06, target: 838 }]}
             note="Target shown only for CIL, where a FY2024-25 target is present in the supplied dataset."
           >
             <SimpleBar
@@ -207,23 +217,18 @@ function Analytics() {
           <ChartCard
             title="Dispatch by company (MT)"
             source={CHART_SOURCES.dispatch}
+            dataRows={dispatchRows}
             note="Company-level dispatch split is illustrative demo data."
           >
             <SimpleBar
-              data={dispatchByCompany
-                .filter((r) => company === "All companies" || r.company === company)
-                .map((r) => ({
-                  company: r.company,
-                  ...(years.includes("FY2023-24") ? { "FY2023-24": r.fy24 } : {}),
-                  ...(years.includes("FY2024-25") ? { "FY2024-25": r.fy25 } : {}),
-                }))}
+              data={dispatchRows}
               x="company"
               series={compareSeries}
             />
           </ChartCard>
         )}
         {visible("Demand") && (
-          <ChartCard title="Coal demand by sector (MT)" source={CHART_SOURCES.demand}>
+          <ChartCard title="Coal demand by sector (MT)" source={CHART_SOURCES.demand} dataRows={demandBySector}>
             <SimpleBar
               data={demandBySector}
               x="sector"
@@ -233,7 +238,7 @@ function Analytics() {
           </ChartCard>
         )}
         {visible("Imports") && (
-          <ChartCard title="Annual coal imports (MT)" source={CHART_SOURCES.imports}>
+          <ChartCard title="Annual coal imports (MT)" source={CHART_SOURCES.imports} dataRows={importRows}>
             <SimpleLine
               data={importRows}
               x="fy"
@@ -242,17 +247,17 @@ function Analytics() {
           </ChartCard>
         )}
         {visible("Lignite") && (
-          <ChartCard title="Lignite production (MT)" source={CHART_SOURCES.lignite}>
+          <ChartCard title="Lignite production (MT)" source={CHART_SOURCES.lignite} dataRows={ligniteRows(ligniteProduction)}>
             <SimpleBar data={ligniteRows(ligniteProduction)} x="company" series={compareSeries} />
           </ChartCard>
         )}
         {visible("Lignite") && (
-          <ChartCard title="Lignite dispatch (MT)" source={CHART_SOURCES.lignite}>
+          <ChartCard title="Lignite dispatch (MT)" source={CHART_SOURCES.lignite} dataRows={ligniteRows(ligniteDispatch)}>
             <SimpleBar data={ligniteRows(ligniteDispatch)} x="company" series={compareSeries} />
           </ChartCard>
         )}
         {visible("CMPDI Financials") && (
-          <ChartCard title="CMPDI financial performance (₹ crore)" source={CHART_SOURCES.cmpdi}>
+          <ChartCard title="CMPDI financial performance (₹ crore)" source={CHART_SOURCES.cmpdi} dataRows={fin}>
             <SimpleBar
               data={fin}
               x="metric"

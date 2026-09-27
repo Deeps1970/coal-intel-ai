@@ -12,7 +12,7 @@ export function GlobalSearch({ open, onOpenChange }: { open: boolean; onOpenChan
     onOpenChange(false);
     fn();
   };
-  const total = res.documents.length + res.datasets.length + res.reports.length + res.topics.length + res.entities.length;
+  const total = res.documents.length + res.datasets.length + res.records.length + res.reports.length + res.topics.length + res.entities.length;
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
@@ -37,6 +37,15 @@ export function GlobalSearch({ open, onOpenChange }: { open: boolean; onOpenChan
             ))}
           </CommandGroup>
         )}
+        {res.records.length > 0 && (
+          <CommandGroup heading="Records">
+            {res.records.map((r) => (
+              <CommandItem key={`${r.datasetId}-${r.id}`} value={`record ${r.dataset} ${r.label} ${r.period}`} onSelect={() => go(() => nav({ to: "/data", search: { tab: r.datasetId } }))}>
+                <Database /><span className="min-w-0 flex-1 truncate">{r.label}</span><span className="ml-auto text-[10px] text-muted-foreground">{r.dataset} · {r.period}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
         {res.reports.length > 0 && (
           <CommandGroup heading="Reports">
             {res.reports.map((r) => (
@@ -56,7 +65,7 @@ export function GlobalSearch({ open, onOpenChange }: { open: boolean; onOpenChan
           </CommandGroup>
         )}
         {res.entities.length > 0 && (
-          <CommandGroup heading="Entities">
+          <CommandGroup heading="Companies">
             {res.entities.map((e) => (
               <CommandItem key={e.id} value={`ent ${e.name} ${e.short}`} onSelect={() => go(() => nav({ to: "/entities/$id", params: { id: e.id } }))}>
                 <Building2 /> {e.name} <span className="ml-auto text-xs text-muted-foreground">{e.short}</span>

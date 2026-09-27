@@ -1,127 +1,327 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bot, FileSearch, FileText, TrendingUp, UploadCloud, ShieldCheck, BarChart3, Sparkles } from "lucide-react";
-import { Panel, PageHeader, DemoTag } from "@/components/app/common";
+import { BarChart3, Bot, FileText, ShieldCheck, UploadCloud } from "lucide-react";
+import { PageHeader, Panel, StatusBadge } from "@/components/app/common";
 import { ChartCard, SimpleArea, SimpleBar, SimpleLine } from "@/components/app/charts";
-import { WorkflowStrip } from "@/components/app/WorkflowStrip";
 import { Button } from "@/components/ui/button";
-import { KPIS, productionTrend, productionByCompany, importsTrend, CHART_SOURCES } from "@/services/analytics";
+import {
+  productionTrend,
+  productionByCompany,
+  importsTrend,
+  demandBySector,
+  dispatchByCompany,
+  cmpdiFinancials,
+  CHART_SOURCES,
+} from "@/services/analytics";
 import { ACTIVITY } from "@/data/misc";
-import { cn } from "@/lib/utils";
-import { SourceCitation } from "@/components/app/SourceCitation";
+import { DOCUMENTS } from "@/data/documents";
 import { SOURCES } from "@/data/sources";
+import { SourceCitation } from "@/components/app/SourceCitation";
 
 export const Route = createFileRoute("/_workspace/dashboard")({
   head: () => ({
     meta: [
-      { title: "Coal Intelligence Dashboard — COALINTEL AI" },
-      { name: "description", content: "Unified view of documents, production data, reporting activity and AI insights." },
-      { property: "og:title", content: "Coal Intelligence Dashboard — COALINTEL AI" },
-      { property: "og:description", content: "Unified view of documents, production data, reporting activity and AI insights." },
+      { title: "Information & Reporting Dashboard — COALINTEL AI" },
+      {
+        name: "description",
+        content:
+          "Operational overview of coal sector information, source documents, validation and reporting activity.",
+      },
     ],
   }),
   component: Dashboard,
 });
 
-const FEATURES = [
-  { icon: FileText, title: "Automated Reporting", body: "Generate structured reports from multiple sources.", to: "/reports" },
-  { icon: FileSearch, title: "Document Intelligence", body: "Extract information from PDFs, spreadsheets, scans and historical documents.", to: "/documents" },
-  { icon: Bot, title: "AI Knowledge Assistant", body: "Ask natural-language questions and receive source-backed answers.", to: "/ai-assistant" },
+const actions = [
+  { label: "Upload Document", to: "/documents", icon: UploadCloud },
+  { label: "AI Query & Response", to: "/ai-assistant", icon: Bot },
+  { label: "Generate Report", to: "/reports", icon: FileText },
+  { label: "Data Validation", to: "/validation", icon: ShieldCheck },
+  { label: "Analytical Reports", to: "/analytics", icon: BarChart3 },
 ] as const;
 
 function Dashboard() {
+  const metrics = [
+    {
+      label: "Total Coal Production",
+      value: "1,047.52 MT",
+      period: "FY2024-25",
+      status: "Actual",
+      source: SOURCES.production,
+    },
+    {
+      label: "Coal Imports",
+      value: "243.62 MT",
+      period: "FY2024-25",
+      status: "Actual",
+      source: SOURCES.imports,
+    },
+    {
+      label: "Coal Demand",
+      value: "1,267.13 MT",
+      period: "FY2024-25",
+      status: "Actual",
+      source: SOURCES.demand,
+    },
+    {
+      label: "CMPDI PAT",
+      value: "₹666.91 Cr",
+      period: "FY2024-25",
+      status: "Actual",
+      source: SOURCES.cmpdi,
+    },
+  ];
+  const observation = [
+    ["Coal production increased by 5.0% from FY2023-24 to FY2024-25.", SOURCES.production],
+    ["Imports decreased from 264.53 MT to 243.62 MT.", SOURCES.imports],
+    ["Power utilities account for the largest recorded coal demand segment.", SOURCES.demand],
+  ] as const;
   return (
     <>
-      <section className="relative mb-8 overflow-hidden rounded-2xl bg-sidebar p-6 text-sidebar-accent-foreground md:p-8">
-        <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-sidebar-primary/10 blur-3xl" />
-        <div className="relative grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-end">
-          <div>
-            <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-sidebar-primary">Coal Intelligence Dashboard</div>
-            <h1 className="text-2xl font-semibold tracking-tight md:text-4xl">From scattered reports to trusted intelligence.</h1>
-            <p className="mt-3 max-w-xl text-sm text-sidebar-foreground/75">
-              COALINTEL AI transforms geological, mining, production and administrative information into searchable, validated and traceable intelligence.
-            </p>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
-            {FEATURES.map((f) => (
-              <Link key={f.title} to={f.to} className="group flex items-start gap-3 rounded-lg border border-sidebar-border bg-sidebar-accent/60 p-3 transition-colors hover:border-sidebar-primary/50">
-                <f.icon className="mt-0.5 h-4 w-4 shrink-0 text-sidebar-primary" />
-                <div>
-                  <div className="text-sm font-medium">{f.title}</div>
-                  <div className="text-xs text-sidebar-foreground/65">{f.body}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <PageHeader
-        title="Coal Intelligence Dashboard"
-        subtitle="Unified view of documents, production data, reporting activity and AI insights."
-        actions={<WorkflowStrip />}
+        eyebrow="COALINTEL AI · SIH 2026 Prototype · PS 26023"
+        title="Information & Reporting Dashboard"
+        subtitle="Operational overview of source documents, coal sector datasets, validation and reporting activity."
       />
-
-      <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        {KPIS.map((k, i) => (
-          <div key={k.key} className="card-lift animate-fade-up rounded-xl border bg-card p-4" style={{ animationDelay: `${i * 40}ms` }}>
-            <div className="flex items-start justify-between gap-2">
-              <span className="text-xs text-muted-foreground">{k.label}</span>
+      <div className="mb-5 grid gap-px overflow-hidden rounded-md border bg-border sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          ["Reporting Period", "FY2024-25"],
+          ["Data Status", "Actual · selected records"],
+          ["Last Updated", "27 September 2026"],
+          ["Use Case", "Designed for CMPDI / CIL reporting"],
+        ].map(([k, v]) => (
+          <div key={k} className="bg-card px-4 py-3">
+            <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              {k}
             </div>
-            <div className={cn("tabular mt-2 text-2xl font-semibold tracking-tight md:text-[28px]", k.key === "pending" && "text-accent-foreground")}>{k.value}</div>
-            <div className="mt-2 flex items-center justify-between gap-1">
-              <span className="flex items-center gap-1 text-[11px] text-success"><TrendingUp className="h-3 w-3" />{k.delta}</span>
-              <DemoTag />
-            </div>
+            <div className="mt-1 text-xs font-semibold">{v}</div>
           </div>
         ))}
       </div>
-
-      <Panel className="mb-6" title="Quick actions" action={<span className="text-xs text-muted-foreground">Prototype workflow</span>}>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-          {[
-            { label: "Upload document", to: "/documents", icon: UploadCloud },
-            { label: "Ask AI", to: "/ai-assistant", icon: Bot },
-            { label: "Generate report", to: "/reports", icon: FileText },
-            { label: "Run validation", to: "/validation", icon: ShieldCheck },
-            { label: "Explore analytics", to: "/analytics", icon: BarChart3 },
-          ].map((a) => <Link key={a.label} to={a.to} className="flex items-center gap-2 rounded-lg border p-3 text-sm font-medium transition hover:border-primary/50 hover:bg-accent/30"><a.icon className="h-4 w-4 text-primary"/>{a.label}</Link>)}
+      <section
+        aria-label="Key sector statistics"
+        className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      >
+        {metrics.map((m) => (
+          <div key={m.label} className="rounded-md border bg-card p-3.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {m.label}
+            </div>
+            <div className="mt-1.5 text-2xl font-semibold tabular tracking-tight">{m.value}</div>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+              <span>{m.period}</span>
+              <StatusBadge status={m.status} />
+            </div>
+            <div className="mt-2 border-t pt-2">
+              <SourceCitation source={m.source} variant="link">
+                Source reference
+              </SourceCitation>
+            </div>
+          </div>
+        ))}
+      </section>
+      <Panel className="mb-5" title="Common Tasks">
+        <div className="flex flex-wrap gap-2">
+          {actions.map((a) => (
+            <Button asChild key={a.label} size="sm" variant="outline">
+              <Link to={a.to}>
+                <a.icon className="mr-2 h-3.5 w-3.5" />
+                {a.label}
+              </Link>
+            </Button>
+          ))}
         </div>
       </Panel>
-
-      <Panel className="mb-6" title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary"/>AI Insights</span>} action={<Link to="/ai-assistant" className="text-xs text-accent-foreground hover:underline">Ask a follow-up</Link>}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {[
-            { text: "Coal production increased by about 5.0% year over year to 1,047.52 MT.", source: SOURCES.production },
-            { text: "CIL contributed 781.06 MT of FY2024-25 production; subsidiary splits are illustrative.", source: SOURCES.production },
-            { text: "Coal imports declined by 7.9% from FY2023-24 to FY2024-25.", source: SOURCES.imports },
-            { text: "CMPDI PAT was ₹666.91 crore in FY2024-25.", source: SOURCES.cmpdi },
-          ].map((i) => <div key={i.text} className="rounded-lg border bg-muted/20 p-3"><p className="text-xs leading-relaxed">{i.text}</p><div className="mt-2"><SourceCitation source={i.source} variant="link">View source</SourceCitation></div></div>)}
+      <Panel className="mb-5" title="Automated Observations · AI-Assisted">
+        <div className="grid gap-2 md:grid-cols-3">
+          {observation.map(([text, source]) => (
+            <div key={text} className="border-l-2 border-primary/60 py-1 pl-3">
+              <p className="text-xs leading-relaxed">{text}</p>
+              <div className="mt-1">
+                <SourceCitation source={source} variant="link">
+                  View source reference
+                </SourceCitation>
+              </div>
+            </div>
+          ))}
         </div>
       </Panel>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Coal Production Trend (MT)" source={CHART_SOURCES.production} note="* FY2025-26 is provisional Apr–Dec 2025 YTD — not an annual value.">
-          <SimpleLine data={productionTrend} x="fy" series={[{ key: "actual", name: "Actual (annual)" }, { key: "provisional", name: "Provisional YTD", dashed: true }]} />
+      <section aria-label="Sector performance charts" className="grid gap-4 xl:grid-cols-2">
+        <ChartCard
+          title="Coal Production — Annual Trend (MT)"
+          source={CHART_SOURCES.production}
+          dataRows={productionTrend}
+          note="FY2025-26 is provisional Apr–Dec 2025 YTD; not an annual value."
+        >
+          <SimpleLine
+            data={productionTrend}
+            x="fy"
+            series={[
+              { key: "actual", name: "Actual (annual)" },
+              { key: "provisional", name: "Provisional YTD", dashed: true },
+            ]}
+          />
         </ChartCard>
-        <ChartCard title="Production by Company (MT)" source={CHART_SOURCES.company} note="CIL subsidiary split is illustrative; reconciles to CIL totals.">
-          <SimpleBar data={productionByCompany} x="company" series={[{ key: "fy24", name: "FY2023-24" }, { key: "fy25", name: "FY2024-25" }]} />
+        <ChartCard
+          title="Coal Production — Company Comparison (MT)"
+          source={CHART_SOURCES.company}
+          dataRows={productionByCompany}
+          note="CIL subsidiary allocation is illustrative; company totals are source-derived."
+        >
+          <SimpleBar
+            data={productionByCompany}
+            x="company"
+            series={[
+              { key: "fy24", name: "FY2023-24" },
+              { key: "fy25", name: "FY2024-25" },
+            ]}
+          />
         </ChartCard>
-        <ChartCard title="Coal Imports (MT)" source={CHART_SOURCES.imports} note="Category split for FY2023-24 onwards is illustrative; totals are reported.">
-          <SimpleArea data={importsTrend} x="fy" series={[{ key: "total", name: "Total Import" }, { key: "coking", name: "Coking Coal" }, { key: "power", name: "Power" }, { key: "nonReg", name: "Non-Regulated Sector" }]} />
+        <ChartCard
+          title="Coal Dispatch — Company Comparison (MT)"
+          source={CHART_SOURCES.dispatch}
+          dataRows={dispatchByCompany}
+          note="Supplied dispatch comparison is illustrative demo data."
+        >
+          <SimpleBar
+            data={dispatchByCompany}
+            x="company"
+            series={[
+              { key: "fy24", name: "FY2023-24" },
+              { key: "fy25", name: "FY2024-25" },
+            ]}
+          />
         </ChartCard>
-        <Panel title="Recent Processing Activity" action={<Button asChild size="sm" variant="ghost"><Link to="/documents">View all</Link></Button>}>
-          <ol className="relative space-y-5 border-l pl-5">
-            {ACTIVITY.map((a) => (
-              <li key={a.title} className="relative">
-                <span className={cn("absolute -left-[25px] top-1 h-2.5 w-2.5 rounded-full ring-4 ring-card", a.tone === "success" ? "bg-success" : "bg-chart-3")} />
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-sm font-medium">{a.title}</span>
-                  <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{a.time}</span>
-                </div>
-                <div className="text-xs text-muted-foreground">{a.detail}</div>
-              </li>
-            ))}
-          </ol>
+        <ChartCard
+          title="Import Position (MT)"
+          source={CHART_SOURCES.imports}
+          dataRows={importsTrend}
+          note="Import totals are source-derived; category splits are illustrative."
+        >
+          <SimpleArea
+            data={importsTrend}
+            x="fy"
+            series={[
+              { key: "total", name: "Total Import" },
+              { key: "coking", name: "Coking Coal" },
+              { key: "power", name: "Power" },
+              { key: "nonReg", name: "Non-Regulated Sector" },
+            ]}
+          />
+        </ChartCard>
+        <ChartCard
+          title="Coal Demand by Sector (MT)"
+          source={CHART_SOURCES.demand}
+          dataRows={demandBySector}
+        >
+          <SimpleBar
+            data={demandBySector}
+            x="sector"
+            series={[{ key: "value", name: "FY2024-25" }]}
+            horizontal
+          />
+        </ChartCard>
+        <ChartCard
+          title="CMPDI Financial Position (₹ crore)"
+          source={CHART_SOURCES.cmpdi}
+          dataRows={cmpdiFinancials.map((r) => ({
+            metric: r.metric,
+            "FY2023-24": r.fy24,
+            "FY2024-25": r.fy25,
+          }))}
+        >
+          <SimpleBar
+            data={cmpdiFinancials.map((r) => ({
+              metric: r.metric,
+              "FY2023-24": r.fy24,
+              "FY2024-25": r.fy25,
+            }))}
+            x="metric"
+            series={[
+              { key: "FY2023-24", name: "FY2023-24" },
+              { key: "FY2024-25", name: "FY2024-25" },
+            ]}
+          />
+        </ChartCard>
+      </section>
+      <div className="mt-5 grid gap-4 xl:grid-cols-2">
+        <Panel
+          title="Recent Documents"
+          action={
+            <Button asChild size="sm" variant="ghost">
+              <Link to="/documents">View register</Link>
+            </Button>
+          }
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[620px] text-left text-xs">
+              <thead className="border-y bg-muted/30 text-muted-foreground">
+                <tr>
+                  {["Document ID", "Document Title", "Source", "Uploaded", "Status"].map((h) => (
+                    <th key={h} className="px-2.5 py-2 font-medium">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {DOCUMENTS.slice(0, 4).map((d) => (
+                  <tr key={d.id}>
+                    <td className="px-2.5 py-2 font-mono">{d.id}</td>
+                    <td className="px-2.5 py-2">
+                      <Link
+                        className="font-medium hover:underline"
+                        to="/documents/$id"
+                        params={{ id: d.id }}
+                      >
+                        {d.name}
+                      </Link>
+                      <div className="text-muted-foreground">{d.category}</div>
+                    </td>
+                    <td className="px-2.5 py-2">{d.source}</td>
+                    <td className="px-2.5 py-2">{d.uploadedAt}</td>
+                    <td className="px-2.5 py-2">
+                      <StatusBadge status={d.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+        <Panel
+          title="Recent Activities"
+          action={
+            <Button asChild size="sm" variant="ghost">
+              <Link to="/audit-trail">View audit trail</Link>
+            </Button>
+          }
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[480px] text-left text-xs">
+              <thead className="border-y bg-muted/30 text-muted-foreground">
+                <tr>
+                  {["Timestamp", "User", "Action", "Reference", "Status"].map((h) => (
+                    <th key={h} className="px-2.5 py-2 font-medium">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {ACTIVITY.slice(0, 5).map((a) => (
+                  <tr key={a.title}>
+                    <td className="px-2.5 py-2 font-mono">{a.time}</td>
+                    <td className="px-2.5 py-2">Demo User</td>
+                    <td className="px-2.5 py-2">{a.title}</td>
+                    <td className="px-2.5 py-2 text-muted-foreground">Prototype log</td>
+                    <td className="px-2.5 py-2">
+                      <StatusBadge status={a.tone === "success" ? "Completed" : "Generated"} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Panel>
       </div>
     </>

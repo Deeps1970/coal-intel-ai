@@ -25,7 +25,7 @@ function TopicsPage() {
     return topic.relatedDocIds.includes(d.id) && matchesFilter;
   });
   return <>
-    <PageHeader title="Topic Intelligence" subtitle="Explore themes detected across reports and source documents." actions={<DemoTag label="Local topic model" />} />
+    <PageHeader title="Document Topic Analysis" subtitle="Review topic frequency, recurring terms, trends and related source documents." actions={<DemoTag label="Prototype topic index" />} />
     <div className="mb-4 flex flex-wrap gap-2">{["All Documents", "Annual Report", "FY2024-25", "FY2023-24", "CMPDI", "CIL"].map((f) => <Button key={f} size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)}>{f}</Button>)}</div>
     <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
       <Panel title="Topic frequency cloud" action={<span className="text-xs text-muted-foreground">Select a term to explore</span>}>
@@ -38,7 +38,18 @@ function TopicsPage() {
         </div>
         <p className="mt-2 text-[11px] text-muted-foreground">Word size reflects relative term frequency in the local demo corpus. Topic frequencies are sample index counts.</p>
       </Panel>
-      <Panel title="Topic overview" action={<span className="font-mono text-xs text-muted-foreground">{topic.trend.at(-1)?.fy}</span>}>
+      <Panel title="Topic frequency table" action={<span className="text-xs text-muted-foreground">Indexed corpus counts · select a topic</span>}>
+        <div className="max-h-[330px] overflow-auto">
+          <table className="w-full text-sm">
+            <thead className="sticky top-0 bg-card text-left text-xs text-muted-foreground"><tr className="border-b"><th className="px-2 py-2 font-medium">Topic</th><th className="px-2 py-2 text-right font-medium">Mentions</th><th className="px-2 py-2 text-right font-medium">Documents</th></tr></thead>
+            <tbody>{[...TOPICS].sort((a,b)=>b.frequency-a.frequency).map((t)=><tr key={t.id} className={`cursor-pointer border-b last:border-0 hover:bg-muted/50 ${selected===t.id ? "bg-accent/30" : ""}`} onClick={()=>setSelected(t.id)}><td className="px-2 py-2 font-medium">{t.name}</td><td className="px-2 py-2 text-right font-mono tabular">{t.frequency.toLocaleString()}</td><td className="px-2 py-2 text-right tabular">{t.documents}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">Counts are sample index values from the local prototype corpus.</p>
+      </Panel>
+    </div>
+    <div className="mt-4">
+      <Panel title="Selected topic overview" action={<span className="font-mono text-xs text-muted-foreground">{topic.trend.at(-1)?.fy}</span>}>
         <div className="flex items-start justify-between"><div><div className="text-xl font-semibold">{topic.name}</div><div className="mt-1 text-sm text-muted-foreground">{topic.documents} source documents</div></div><Hash className="h-5 w-5 text-primary" /></div>
         <div className="mt-5 grid grid-cols-2 gap-3"><Metric label="Mentions" value={topic.frequency.toLocaleString()} /><Metric label="Trend" value={`${(((topic.trend.at(-1)?.mentions ?? 0) / (topic.trend.at(-2)?.mentions ?? 1) - 1) * 100).toFixed(1)}%`} positive /></div>
         <div className="mt-5"><div className="mb-2 text-xs font-medium">Related terms</div><div className="flex flex-wrap gap-1.5">{topic.keywords.map((k) => <button className="rounded-full border bg-muted/50 px-2.5 py-1 text-xs hover:border-primary" key={k} onClick={() => setQuery(k)}>{k}</button>)}</div></div>
