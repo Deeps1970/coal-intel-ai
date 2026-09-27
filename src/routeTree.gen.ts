@@ -10,33 +10,202 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WorkspaceRouteImport } from './routes/_workspace'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as WorkspaceAiAssistantRouteImport } from './routes/_workspace.ai-assistant'
+import { Route as WorkspaceAnalyticsRouteImport } from './routes/_workspace.analytics'
+import { Route as WorkspaceDashboardRouteImport } from './routes/_workspace.dashboard'
+import { Route as WorkspaceDataRouteImport } from './routes/_workspace.data'
+import { Route as WorkspaceSettingsRouteImport } from './routes/_workspace.settings'
+import { Route as WorkspaceTopicsRouteImport } from './routes/_workspace.topics'
+import { Route as WorkspaceValidationRouteImport } from './routes/_workspace.validation'
+import { Route as WorkspaceDocumentsIndexRouteImport } from './routes/_workspace.documents.index'
+import { Route as WorkspaceDocumentsIdRouteImport } from './routes/_workspace.documents.$id'
+import { Route as WorkspaceEntitiesIdRouteImport } from './routes/_workspace.entities.$id'
+import { Route as WorkspaceReportsIndexRouteImport } from './routes/_workspace.reports.index'
+import { Route as WorkspaceReportsIdRouteImport } from './routes/_workspace.reports.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorkspaceRoute = WorkspaceRouteImport.update({
+  id: '/_workspace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkspaceAiAssistantRoute = WorkspaceAiAssistantRouteImport.update({
+  id: '/ai-assistant',
+  path: '/ai-assistant',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceAnalyticsRoute = WorkspaceAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceDashboardRoute = WorkspaceDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceDataRoute = WorkspaceDataRouteImport.update({
+  id: '/data',
+  path: '/data',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceSettingsRoute = WorkspaceSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceTopicsRoute = WorkspaceTopicsRouteImport.update({
+  id: '/topics',
+  path: '/topics',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceValidationRoute = WorkspaceValidationRouteImport.update({
+  id: '/validation',
+  path: '/validation',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceDocumentsIndexRoute = WorkspaceDocumentsIndexRouteImport.update({
+  id: '/documents/',
+  path: '/documents/',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceDocumentsIdRoute = WorkspaceDocumentsIdRouteImport.update({
+  id: '/documents/$id',
+  path: '/documents/$id',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceEntitiesIdRoute = WorkspaceEntitiesIdRouteImport.update({
+  id: '/entities/$id',
+  path: '/entities/$id',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceReportsIndexRoute = WorkspaceReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
+const WorkspaceReportsIdRoute = WorkspaceReportsIdRouteImport.update({
+  id: '/reports/$id',
+  path: '/reports/$id',
+  getParentRoute: () => WorkspaceRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/ai-assistant': typeof WorkspaceAiAssistantRoute
+  '/analytics': typeof WorkspaceAnalyticsRoute
+  '/dashboard': typeof WorkspaceDashboardRoute
+  '/data': typeof WorkspaceDataRoute
+  '/settings': typeof WorkspaceSettingsRoute
+  '/topics': typeof WorkspaceTopicsRoute
+  '/validation': typeof WorkspaceValidationRoute
+  '/documents/$id': typeof WorkspaceDocumentsIdRoute
+  '/entities/$id': typeof WorkspaceEntitiesIdRoute
+  '/reports/$id': typeof WorkspaceReportsIdRoute
+  '/documents/': typeof WorkspaceDocumentsIndexRoute
+  '/reports/': typeof WorkspaceReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/ai-assistant': typeof WorkspaceAiAssistantRoute
+  '/analytics': typeof WorkspaceAnalyticsRoute
+  '/dashboard': typeof WorkspaceDashboardRoute
+  '/data': typeof WorkspaceDataRoute
+  '/settings': typeof WorkspaceSettingsRoute
+  '/topics': typeof WorkspaceTopicsRoute
+  '/validation': typeof WorkspaceValidationRoute
+  '/documents/$id': typeof WorkspaceDocumentsIdRoute
+  '/entities/$id': typeof WorkspaceEntitiesIdRoute
+  '/reports/$id': typeof WorkspaceReportsIdRoute
+  '/documents': typeof WorkspaceDocumentsIndexRoute
+  '/reports': typeof WorkspaceReportsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_workspace': typeof WorkspaceRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_workspace/ai-assistant': typeof WorkspaceAiAssistantRoute
+  '/_workspace/analytics': typeof WorkspaceAnalyticsRoute
+  '/_workspace/dashboard': typeof WorkspaceDashboardRoute
+  '/_workspace/data': typeof WorkspaceDataRoute
+  '/_workspace/settings': typeof WorkspaceSettingsRoute
+  '/_workspace/topics': typeof WorkspaceTopicsRoute
+  '/_workspace/validation': typeof WorkspaceValidationRoute
+  '/_workspace/documents/$id': typeof WorkspaceDocumentsIdRoute
+  '/_workspace/entities/$id': typeof WorkspaceEntitiesIdRoute
+  '/_workspace/reports/$id': typeof WorkspaceReportsIdRoute
+  '/_workspace/documents/': typeof WorkspaceDocumentsIndexRoute
+  '/_workspace/reports/': typeof WorkspaceReportsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/ai-assistant'
+    | '/analytics'
+    | '/dashboard'
+    | '/data'
+    | '/settings'
+    | '/topics'
+    | '/validation'
+    | '/documents/$id'
+    | '/entities/$id'
+    | '/reports/$id'
+    | '/documents/'
+    | '/reports/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/ai-assistant'
+    | '/analytics'
+    | '/dashboard'
+    | '/data'
+    | '/settings'
+    | '/topics'
+    | '/validation'
+    | '/documents/$id'
+    | '/entities/$id'
+    | '/reports/$id'
+    | '/documents'
+    | '/reports'
+  id:
+    | '__root__'
+    | '/'
+    | '/_workspace'
+    | '/login'
+    | '/_workspace/ai-assistant'
+    | '/_workspace/analytics'
+    | '/_workspace/dashboard'
+    | '/_workspace/data'
+    | '/_workspace/settings'
+    | '/_workspace/topics'
+    | '/_workspace/validation'
+    | '/_workspace/documents/$id'
+    | '/_workspace/entities/$id'
+    | '/_workspace/reports/$id'
+    | '/_workspace/documents/'
+    | '/_workspace/reports/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  WorkspaceRoute: typeof WorkspaceRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +217,145 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_workspace': {
+      id: '/_workspace'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof WorkspaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_workspace/ai-assistant': {
+      id: '/_workspace/ai-assistant'
+      path: '/ai-assistant'
+      fullPath: '/ai-assistant'
+      preLoaderRoute: typeof WorkspaceAiAssistantRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/analytics': {
+      id: '/_workspace/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof WorkspaceAnalyticsRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/dashboard': {
+      id: '/_workspace/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof WorkspaceDashboardRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/data': {
+      id: '/_workspace/data'
+      path: '/data'
+      fullPath: '/data'
+      preLoaderRoute: typeof WorkspaceDataRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/settings': {
+      id: '/_workspace/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof WorkspaceSettingsRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/topics': {
+      id: '/_workspace/topics'
+      path: '/topics'
+      fullPath: '/topics'
+      preLoaderRoute: typeof WorkspaceTopicsRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/validation': {
+      id: '/_workspace/validation'
+      path: '/validation'
+      fullPath: '/validation'
+      preLoaderRoute: typeof WorkspaceValidationRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/documents/': {
+      id: '/_workspace/documents/'
+      path: '/documents'
+      fullPath: '/documents/'
+      preLoaderRoute: typeof WorkspaceDocumentsIndexRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/documents/$id': {
+      id: '/_workspace/documents/$id'
+      path: '/documents/$id'
+      fullPath: '/documents/$id'
+      preLoaderRoute: typeof WorkspaceDocumentsIdRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/entities/$id': {
+      id: '/_workspace/entities/$id'
+      path: '/entities/$id'
+      fullPath: '/entities/$id'
+      preLoaderRoute: typeof WorkspaceEntitiesIdRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/reports/': {
+      id: '/_workspace/reports/'
+      path: '/reports'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof WorkspaceReportsIndexRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
+    '/_workspace/reports/$id': {
+      id: '/_workspace/reports/$id'
+      path: '/reports/$id'
+      fullPath: '/reports/$id'
+      preLoaderRoute: typeof WorkspaceReportsIdRouteImport
+      parentRoute: typeof WorkspaceRoute
+    }
   }
 }
 
+interface WorkspaceRouteChildren {
+  WorkspaceAiAssistantRoute: typeof WorkspaceAiAssistantRoute
+  WorkspaceAnalyticsRoute: typeof WorkspaceAnalyticsRoute
+  WorkspaceDashboardRoute: typeof WorkspaceDashboardRoute
+  WorkspaceDataRoute: typeof WorkspaceDataRoute
+  WorkspaceSettingsRoute: typeof WorkspaceSettingsRoute
+  WorkspaceTopicsRoute: typeof WorkspaceTopicsRoute
+  WorkspaceValidationRoute: typeof WorkspaceValidationRoute
+  WorkspaceDocumentsIdRoute: typeof WorkspaceDocumentsIdRoute
+  WorkspaceEntitiesIdRoute: typeof WorkspaceEntitiesIdRoute
+  WorkspaceReportsIdRoute: typeof WorkspaceReportsIdRoute
+  WorkspaceDocumentsIndexRoute: typeof WorkspaceDocumentsIndexRoute
+  WorkspaceReportsIndexRoute: typeof WorkspaceReportsIndexRoute
+}
+
+const WorkspaceRouteChildren: WorkspaceRouteChildren = {
+  WorkspaceAiAssistantRoute: WorkspaceAiAssistantRoute,
+  WorkspaceAnalyticsRoute: WorkspaceAnalyticsRoute,
+  WorkspaceDashboardRoute: WorkspaceDashboardRoute,
+  WorkspaceDataRoute: WorkspaceDataRoute,
+  WorkspaceSettingsRoute: WorkspaceSettingsRoute,
+  WorkspaceTopicsRoute: WorkspaceTopicsRoute,
+  WorkspaceValidationRoute: WorkspaceValidationRoute,
+  WorkspaceDocumentsIdRoute: WorkspaceDocumentsIdRoute,
+  WorkspaceEntitiesIdRoute: WorkspaceEntitiesIdRoute,
+  WorkspaceReportsIdRoute: WorkspaceReportsIdRoute,
+  WorkspaceDocumentsIndexRoute: WorkspaceDocumentsIndexRoute,
+  WorkspaceReportsIndexRoute: WorkspaceReportsIndexRoute,
+}
+
+const WorkspaceRouteWithChildren = WorkspaceRoute._addFileChildren(
+  WorkspaceRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  WorkspaceRoute: WorkspaceRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
