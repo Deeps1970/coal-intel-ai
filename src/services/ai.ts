@@ -65,6 +65,12 @@ function answer(q: string): Omit<AIMessage, "id" | "role"> {
   if (s.includes("largest increase")) {
     return { content: "Captive & Others recorded the largest increase (+43.88 MT). Within CIL, MCL rose the most (+18.41 MT, illustrative split).", meta: { source: AR, dataset: "Production", period: "FY2023-24 vs FY2024-25", status: "Actual", confidence: 96 }, sources: [SOURCES.production, SOURCES.subsidiary], followUps: ["Which company declined?"] };
   }
+  if ((s.includes("pat") || s.includes("profit after tax")) && (s.includes("cmpdi") || s.includes("financial"))) {
+    return { content: "CMPDI reported Profit After Tax (PAT) of ₹666.91 crore in FY2024-25. The value is source-derived from the CMPDI financial dataset.", meta: { source: SOURCES.cmpdi.document, dataset: "CMPDI Financials", period: "FY2024-25", status: "Actual", confidence: 99 }, table: { columns: ["Metric", "FY2024-25", "Unit", "Status"], rows: [["PAT", 666.91, "₹ crore", "Actual"]] }, sources: [SOURCES.cmpdi], followUps: ["Show CMPDI revenue and total income", "Generate a financial report"] };
+  }
+  if (s.includes("major topic") || s.includes("word cloud") || s.includes("topics in")) {
+    return { content: "The most frequent themes in the local annual-report index are Coal Production, Mining, Dispatch, Power, Finance and Exploration. Production and dispatch show the strongest recent mention growth in this sample corpus. Topic counts are indexed demo metadata, not official sector statistics.", meta: { source: "COALINTEL local document topic index", dataset: "Topics", period: "FY2024-25", status: "Illustrative", confidence: 90 }, table: { columns: ["Topic", "Indexed mentions"], rows: [["Coal Production", 1842], ["Mining", 1310], ["Dispatch", 1104], ["Power", 980], ["Finance", 820], ["Exploration", 720]] }, sources: [SOURCES.production], followUps: ["Open topic intelligence", "Summarize the latest uploaded annual report"] };
+  }
   if (s.includes("declin")) {
     return { content: "SCCL declined from 70.02 MT to 69.01 MT (−1.01 MT). Within CIL, SECL declined by 19.8 MT (illustrative split).", meta: { source: AR, dataset: "Production", period: "FY2023-24 vs FY2024-25", status: "Actual", confidence: 95 }, sources: [SOURCES.production, SOURCES.subsidiary], followUps: ["Show dispatch comparison."] };
   }
@@ -106,7 +112,7 @@ function answer(q: string): Omit<AIMessage, "id" | "role"> {
       followUps: ["Generate a dispatch report", "Compare coal production across CIL subsidiaries."],
     };
   }
-  if (s.includes("production") || s.includes("2024-25") || s.includes("india")) {
+  if (s.includes("production")) {
     return {
       content: "India's total coal production in FY2024-25 was **1047.52 MT**, up from 997.25 MT in FY2023-24. CIL contributed 781.06 MT, SCCL 69.01 MT and Captive & Others 197.46 MT.",
       meta: { source: AR, dataset: "Production", period: "FY2024-25", status: "Actual", confidence: 99 },

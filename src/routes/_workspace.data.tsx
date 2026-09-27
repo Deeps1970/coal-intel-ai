@@ -98,6 +98,7 @@ function DataPage() {
                         </button>
                       </th>
                     ))}
+                    <th className="px-4 py-2.5 text-left font-medium">Source</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -108,6 +109,7 @@ function DataPage() {
                           {c.key === "category" ? <StatusBadge status={String(r[c.key])} /> : c.numeric ? Number(r[c.key]).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : r[c.key]}
                         </td>
                       ))}
+                      <td className="px-4 py-2.5"><SourceCitation source={{ ...active.source, period: String(r.fy ?? active.source.period), status: (String(r.category) as typeof active.source.status) }} variant="link">View source</SourceCitation></td>
                     </tr>
                   ))}
                 </tbody>

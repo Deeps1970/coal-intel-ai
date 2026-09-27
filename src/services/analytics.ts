@@ -1,4 +1,4 @@
-import { CMPDI, SUB_PROD, SUBSIDIARIES } from "@/data/coal";
+import { CMPDI, SUB_PROD, SUBSIDIARIES, DATASETS } from "@/data/coal";
 import { SOURCES } from "@/data/sources";
 
 export const KPIS = [
@@ -52,8 +52,17 @@ export const ligniteProduction = [
   { company: "Others", fy24: 11.7, fy25: 11.5 },
 ];
 
+export const ligniteDispatch = DATASETS.find((d) => d.id === "lignite-dispatch")?.records.reduce((rows, record) => {
+  const company = String(record.company);
+  const row = rows.find((r) => r.company === company) ?? { company, fy24: 0, fy25: 0 };
+  if (record.fy === "FY2023-24") row.fy24 = Number(record.value);
+  if (record.fy === "FY2024-25") row.fy25 = Number(record.value);
+  if (!rows.includes(row)) rows.push(row);
+  return rows;
+}, [] as { company: string; fy24: number; fy25: number }[]) ?? [];
+
 export const cmpdiFinancials = CMPDI.filter((m) =>
-  ["Revenue from Operations", "Total Income", "PBT", "PAT"].includes(m.metric),
+  ["Revenue from Operations", "Total Income", "Total Expenses", "PBT", "PAT"].includes(m.metric),
 ).map((m) => ({ metric: m.metric.replace("Revenue from Operations", "Revenue"), fy24: m.fy24, fy25: m.fy25 }));
 
 export const CHART_SOURCES = {

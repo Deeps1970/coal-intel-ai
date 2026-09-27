@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bot, FileSearch, FileText, TrendingUp } from "lucide-react";
+import { Bot, FileSearch, FileText, TrendingUp, UploadCloud, ShieldCheck, BarChart3, Sparkles } from "lucide-react";
 import { Panel, PageHeader, DemoTag } from "@/components/app/common";
 import { ChartCard, SimpleArea, SimpleBar, SimpleLine } from "@/components/app/charts";
 import { WorkflowStrip } from "@/components/app/WorkflowStrip";
@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { KPIS, productionTrend, productionByCompany, importsTrend, CHART_SOURCES } from "@/services/analytics";
 import { ACTIVITY } from "@/data/misc";
 import { cn } from "@/lib/utils";
+import { SourceCitation } from "@/components/app/SourceCitation";
+import { SOURCES } from "@/data/sources";
 
 export const Route = createFileRoute("/_workspace/dashboard")({
   head: () => ({
@@ -73,6 +75,29 @@ function Dashboard() {
           </div>
         ))}
       </div>
+
+      <Panel className="mb-6" title="Quick actions" action={<span className="text-xs text-muted-foreground">Prototype workflow</span>}>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            { label: "Upload document", to: "/documents", icon: UploadCloud },
+            { label: "Ask AI", to: "/ai-assistant", icon: Bot },
+            { label: "Generate report", to: "/reports", icon: FileText },
+            { label: "Run validation", to: "/validation", icon: ShieldCheck },
+            { label: "Explore analytics", to: "/analytics", icon: BarChart3 },
+          ].map((a) => <Link key={a.label} to={a.to} className="flex items-center gap-2 rounded-lg border p-3 text-sm font-medium transition hover:border-primary/50 hover:bg-accent/30"><a.icon className="h-4 w-4 text-primary"/>{a.label}</Link>)}
+        </div>
+      </Panel>
+
+      <Panel className="mb-6" title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary"/>AI Insights</span>} action={<Link to="/ai-assistant" className="text-xs text-accent-foreground hover:underline">Ask a follow-up</Link>}>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            { text: "Coal production increased by about 5.0% year over year to 1,047.52 MT.", source: SOURCES.production },
+            { text: "CIL contributed 781.06 MT of FY2024-25 production; subsidiary splits are illustrative.", source: SOURCES.production },
+            { text: "Coal imports declined by 7.9% from FY2023-24 to FY2024-25.", source: SOURCES.imports },
+            { text: "CMPDI PAT was ₹666.91 crore in FY2024-25.", source: SOURCES.cmpdi },
+          ].map((i) => <div key={i.text} className="rounded-lg border bg-muted/20 p-3"><p className="text-xs leading-relaxed">{i.text}</p><div className="mt-2"><SourceCitation source={i.source} variant="link">View source</SourceCitation></div></div>)}
+        </div>
+      </Panel>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartCard title="Coal Production Trend (MT)" source={CHART_SOURCES.production} note="* FY2025-26 is provisional Apr–Dec 2025 YTD — not an annual value.">

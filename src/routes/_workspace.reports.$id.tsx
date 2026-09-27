@@ -1,12 +1,20 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHeader, Panel } from "@/components/app/common";
+import { Download, Printer } from "lucide-react";
+import { PageHeader, Panel, StatusBadge, EmptyState } from "@/components/app/common";
+import { Button } from "@/components/ui/button";
+import { getReport } from "@/services/reports";
+import { download } from "@/services/datasets";
+import type { Report } from "@/types";
 
-export const Route = createFileRoute("/_workspace/reports/$id")({
-  head: () => ({ meta: [{ title: "Report Preview — COALINTEL AI" }, { name: "description", content: "AI-assisted draft — requires human validation." }, { property: "og:title", content: "Report Preview — COALINTEL AI" }, { property: "og:description", content: "AI-assisted draft — requires human validation." }] }),
-  component: () => (
-    <>
-      <PageHeader title="Report Preview" subtitle="AI-assisted draft — requires human validation." />
-      <Panel><p className="text-sm text-muted-foreground">This module is being assembled. <Link to="/dashboard" className="text-accent-foreground underline">Back to dashboard</Link></p></Panel>
-    </>
-  ),
-});
+export const Route = createFileRoute("/_workspace/reports/$id")({ head: () => ({ meta: [{ title: "Report Preview — COALINTEL AI" }] }), component: ReportDetail });
+function ReportDetail() {
+  const { id } = Route.useParams();
+  const [report, setReport] = useState<Report | null>(null);
+  useEffect(() => { void getReport(id).then(setReport).catch(() => setReport(null)); }, [id]);
+  if (!report) return <><PageHeader title="Report Preview"/><Panel><EmptyState title="Report not found" description="This report may have been removed from local demo storage." action={<Button asChild><Link to="/reports">Back to reports</Link></Button>}/></Panel></>;
+  const csv = `Metric,Value,Unit,Period,Status\nCoal production,1047.52,MT,FY2024-25,Actual\nPrior year production,997.25,MT,FY2023-24,Actual\nCoal imports,243.62,MT,FY2024-25,Actual\nCoal demand,1267.13,MT,FY2024-25,Actual`;
+  const finance = report.type === "Financial Report";
+  const parliamentary = report.type === "Parliamentary Response";
+  return <><PageHeader title={report.title} subtitle={`${report.type} · ${report.period} · Created ${report.createdAt}`} actions={<><Button variant="outline" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4"/>Print / PDF</Button><Button variant="outline" onClick={() => download(`${report.id}.csv`,csv,"text/csv")}><Download className="mr-2 h-4 w-4"/>Export CSV</Button></>}/><Panel><article className="report-paper mx-auto max-w-4xl space-y-6 rounded-xl border bg-white p-8 text-slate-900 md:p-12"><header className="border-b-2 border-amber-500 pb-4"><div className="font-mono text-xs font-bold tracking-[.2em] text-slate-500">COALINTEL AI</div><h2 className="mt-3 text-2xl font-bold">{report.title}</h2><div className="mt-1 text-sm text-slate-500">Reporting period: {report.period}</div></header>{parliamentary && <section><div className="text-xs font-bold tracking-widest text-amber-700">AI-ASSISTED DRAFT</div><h3 className="mt-3 font-semibold">Question</h3><p className="mt-1 text-sm">What was India's total coal production during FY2024-25 compared with FY2023-24?</p></section>}<section><h3 className="font-semibold">{parliamentary ? "Formal response" : "Executive summary"}</h3><p className="mt-2 text-sm leading-7">{finance ? "CMPDI reported revenue from operations of ₹2,102.76 crore and total income of ₹2,177.53 crore in FY2024-25. Profit before tax was ₹882.14 crore and Profit After Tax was ₹666.91 crore." : "India's coal production reached 1,047.52 MT in FY2024-25, compared with 997.25 MT in FY2023-24, an increase of approximately 5.0%. Total imports were 243.62 MT and reported demand was 1,267.13 MT. This local prototype report uses source-derived metrics; illustrative records remain identified as such."}</p></section><section><h3 className="mb-2 font-semibold">{finance ? "CMPDI financial indicators (₹ crore)" : "Key indicators"}</h3><table className="w-full text-sm"><tbody>{(finance ? [["Revenue from Operations", "2,102.76"], ["Total Income", "2,177.53"], ["Total Expenses", "1,295.39"], ["PBT", "882.14"], ["PAT", "666.91"]] : [["Production", "1,047.52 MT"], ["Prior year", "997.25 MT"], ["Imports", "243.62 MT"], ["Demand", "1,267.13 MT"]]).map(([k,v])=><tr key={k} className="border-b"><td className="px-2 py-2">{k}</td><td className="px-2 py-2 font-mono">{v}</td></tr>)}</tbody></table></section><section><h3 className="mb-2 font-semibold">Selected data sources</h3><ul className="list-disc space-y-1 pl-5 text-sm">{report.sources.map((s)=><li key={s}>{s}</li>)}</ul></section><section className="border-t pt-4"><StatusBadge status={report.validation === "Passed" ? "Validated" : "Needs Validation"}/><p className="mt-2 text-sm font-semibold text-amber-800">AI-Assisted Draft — Requires Human Validation</p><p className="text-xs text-slate-500">Confirm figures against source records before official use.</p></section></article></Panel></>;
+}

@@ -131,6 +131,7 @@ function DocumentDetail() {
               <TabsTrigger value="text">Extracted Text</TabsTrigger>
               <TabsTrigger value="tables">Tables</TabsTrigger>
               <TabsTrigger value="entities">Entities</TabsTrigger>
+              <TabsTrigger value="source">Source</TabsTrigger>
             </TabsList>
             <div className="p-4">
               <TabsContent value="summary" className="space-y-4">
@@ -177,6 +178,10 @@ function DocumentDetail() {
                     ))}
                   </ul>
                 )}
+              </TabsContent>
+              <TabsContent value="source" className="space-y-3">
+                <div className="rounded-lg border p-4"><div className="text-sm font-semibold">Source record</div><dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2"><div><dt className="text-xs text-muted-foreground">Document</dt><dd className="mt-1 font-medium">{doc.name}</dd></div><div><dt className="text-xs text-muted-foreground">Origin</dt><dd className="mt-1 font-medium">{doc.source}</dd></div><div><dt className="text-xs text-muted-foreground">Category</dt><dd className="mt-1 font-medium">{doc.category}</dd></div><div><dt className="text-xs text-muted-foreground">Upload date</dt><dd className="mt-1 font-medium">{doc.uploadedAt}</dd></div></dl></div>
+                <SourceCitation source={{ id: `doc-src-${doc.id}`, document: doc.name, section: "Simulated document extraction", period: "As reported", status: "Illustrative", confidence: doc.accuracy ?? 0, excerpt: "Uploaded files are represented by deterministic demo extraction. The file bytes are not OCR-processed or sent to an external service." }} />
               </TabsContent>
             </div>
           </Tabs>

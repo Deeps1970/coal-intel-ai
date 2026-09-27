@@ -2,7 +2,13 @@ import { REPORTS } from "@/data/misc";
 import type { Report } from "@/types";
 import { mockCall } from "./api";
 
-const store: Report[] = [...REPORTS];
+const KEY = "coalintel.reports.v1";
+const readStore = (): Report[] => {
+  if (typeof localStorage === "undefined") return [...REPORTS];
+  try { const saved = localStorage.getItem(KEY); if (saved) return JSON.parse(saved) as Report[]; } catch { /* fall back to bundled examples */ }
+  return [...REPORTS];
+};
+const writeStore = (rows: Report[]) => { if (typeof localStorage !== "undefined") localStorage.setItem(KEY, JSON.stringify(rows)); };
 
 export const REPORT_TYPES = [
   "Executive Summary",
@@ -15,19 +21,21 @@ export const REPORT_TYPES = [
   "Custom Report",
 ];
 export const REPORT_SOURCES = [
-  "Structured datasets",
+  "Coal Production",
+  "Coal Dispatch",
+  "Coal Demand",
+  "Coal Imports",
+  "Lignite Production",
+  "Lignite Dispatch",
+  "CMPDI Financials",
   "Documents",
-  "Historical reports",
-  "Financial data",
-  "Production data",
-  "Dispatch data",
 ];
 export const REPORT_PERIODS = ["FY2024-25", "FY2023-24 – FY2024-25", "Apr–Dec 2025 (Provisional)", "FY2021-22 – FY2024-25"];
 
-export const listReports = () => mockCall("listReports", () => store);
+export const listReports = () => mockCall("listReports", readStore);
 export const getReport = (id: string) =>
   mockCall("listReports", () => {
-    const r = store.find((x) => x.id === id);
+    const r = readStore().find((x) => x.id === id);
     if (!r) throw new Error("Report not found");
     return r;
   });
@@ -48,7 +56,7 @@ export async function generateReport(input: { type: string; sources: string[]; p
         validation: "Pending",
         status: "Generated",
       };
-      store.unshift(r);
+      const rows = readStore(); rows.unshift(r); writeStore(rows);
       return r;
     },
     400,
@@ -57,9 +65,11 @@ export async function generateReport(input: { type: string; sources: string[]; p
 
 export async function updateReportStatus(id: string, status: Report["status"]) {
   return mockCall("listReports", () => {
-    const r = store.find((x) => x.id === id)!;
+    const rows = readStore();
+    const r = rows.find((x) => x.id === id)!;
     r.status = status;
     if (status === "Validated" || status === "Published") r.validation = "Passed";
+    writeStore(rows);
     return r;
   });
 }
