@@ -1,6 +1,6 @@
 import type { SourceReference } from "@/types";
 
-export const SOURCES: Record<string, SourceReference> = {
+export const SOURCES = {
   production: {
     id: "src-prod",
     document: "Ministry of Coal Annual Report 2025-26",
@@ -91,4 +91,4 @@ export const SOURCES: Record<string, SourceReference> = {
     confidence: 99.1,
     excerpt: "Revenue from Operations ₹2102.76 Cr; Profit After Tax ₹666.91 Cr in 2024-25.",
   },
-};
+} satisfies Record<string, SourceReference>;

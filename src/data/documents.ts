@@ -26,7 +26,7 @@ export function buildPipeline(doneUpTo: number, tail: StageStatus = "pending", p
     key,
     label,
     status: i < doneUpTo ? "done" : i === doneUpTo ? tail : "pending",
-    detail: details[key],
+    detail: details[key] ?? "",
   }));
 }
 

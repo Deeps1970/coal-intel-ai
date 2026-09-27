@@ -2,7 +2,7 @@ import type { AppNotification, Report, Topic, ValidationRecord } from "@/types";
 import { SOURCES } from "./sources";
 
 const trend = (a: number[]) =>
-  ["FY2021-22", "FY2022-23", "FY2023-24", "FY2024-25", "FY2025-26"].map((fy, i) => ({ fy, mentions: a[i] }));
+  ["FY2021-22", "FY2022-23", "FY2023-24", "FY2024-25", "FY2025-26"].map((fy, i) => ({ fy, mentions: a[i] ?? 0 }));
 
 const t = (
   id: string,
